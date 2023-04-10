@@ -276,7 +276,7 @@ if __name__ == "__main__":
                 input_image = gr.Image(source='upload', type="pil")
                 text_prompt = gr.Textbox(label="Detection Prompt")
                 task_type = gr.Dropdown(["det", "seg", "inpainting"], label="task type: det/seg/inpainting", value="seg")
-                load_model = gr.Checkbox(label='load model just for the first run', value=True)
+                load_model = gr.Checkbox(label='load the model (just for the first run)', value=True)
                 inpaint_prompt = gr.Textbox(label="Inpaint Prompt")
                 run_button = gr.Button(label="Run")
                 with gr.Accordion("Advanced options", open=False):
