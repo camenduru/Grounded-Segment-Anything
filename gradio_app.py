@@ -167,6 +167,7 @@ ckpt_filenmae = "groundingdino_swint_ogc.pth"
 sam_checkpoint='/content/sam_vit_h_4b8939.pth'
 output_dir="outputs"
 device="cuda"
+pipe = None
 
 def run_grounded_sam(image_path, text_prompt, task_type, inpaint_prompt, box_threshold, text_threshold):
     assert text_prompt, 'text_prompt is not found!'
@@ -246,7 +247,8 @@ def run_grounded_sam(image_path, text_prompt, task_type, inpaint_prompt, box_thr
         mask_pil = Image.fromarray(mask)
         image_pil = Image.fromarray(image)
         
-        if not 'pipe' in globals():
+        global pipe
+        if pipe is not None:
             pipe = StableDiffusionInpaintPipeline.from_pretrained("runwayml/stable-diffusion-inpainting", revision="fp16", torch_dtype=torch.float16, safety_checker=None)
             pipe = pipe.to("cuda")
             pipe.enable_xformers_memory_efficient_attention()
