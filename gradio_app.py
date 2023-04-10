@@ -246,9 +246,7 @@ def run_grounded_sam(image_path, text_prompt, task_type, inpaint_prompt, box_thr
         mask_pil = Image.fromarray(mask)
         image_pil = Image.fromarray(image)
         
-        pipe = StableDiffusionInpaintPipeline.from_pretrained(
-        "runwayml/stable-diffusion-inpainting", torch_dtype=torch.float16
-        )
+        pipe = StableDiffusionInpaintPipeline.from_pretrained("runwayml/stable-diffusion-inpainting", revision="fp16", torch_dtype=torch.float16, safety_checker=None)
         pipe = pipe.to("cuda")
 
         image = pipe(prompt=inpaint_prompt, image=image_pil, mask_image=mask_pil).images[0]
