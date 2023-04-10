@@ -248,6 +248,7 @@ def run_grounded_sam(image_path, text_prompt, task_type, inpaint_prompt, box_thr
         
         pipe = StableDiffusionInpaintPipeline.from_pretrained("runwayml/stable-diffusion-inpainting", revision="fp16", torch_dtype=torch.float16, safety_checker=None)
         pipe = pipe.to("cuda")
+        pipe.enable_xformers_memory_efficient_attention()
 
         image = pipe(prompt=inpaint_prompt, image=image_pil, mask_image=mask_pil).images[0]
         image_path = os.path.join(output_dir, "grounded_sam_inpainting_output.jpg")
