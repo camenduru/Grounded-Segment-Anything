@@ -169,7 +169,7 @@ output_dir="outputs"
 device="cuda"
 pipe = None
 
-def run_grounded_sam(image_path, text_prompt, task_type, inpaint_prompt, box_threshold, text_threshold):
+def run_grounded_sam(image_path, text_prompt, task_type, inpaint_prompt, box_threshold, text_threshold, load_model):
     assert text_prompt, 'text_prompt is not found!'
 
     # make dir
@@ -248,7 +248,8 @@ def run_grounded_sam(image_path, text_prompt, task_type, inpaint_prompt, box_thr
         image_pil = Image.fromarray(image)
         
         global pipe
-        if pipe is not None:
+        if load_model:
+            print("load_model True")
             pipe = StableDiffusionInpaintPipeline.from_pretrained("runwayml/stable-diffusion-inpainting", revision="fp16", torch_dtype=torch.float16, safety_checker=None)
             pipe = pipe.to("cuda")
             pipe.enable_xformers_memory_efficient_attention()
@@ -275,6 +276,7 @@ if __name__ == "__main__":
                 input_image = gr.Image(source='upload', type="pil")
                 text_prompt = gr.Textbox(label="Detection Prompt")
                 task_type = gr.Dropdown(["det", "seg", "inpainting"], label="task type: det/seg/inpainting", value="seg")
+                load_model = gr.Checkbox(label='load model just for the first run', value=True)
                 inpaint_prompt = gr.Textbox(label="Inpaint Prompt")
                 run_button = gr.Button(label="Run")
                 with gr.Accordion("Advanced options", open=False):
@@ -290,8 +292,7 @@ if __name__ == "__main__":
                     type="pil",
                 ).style(full_width=True, full_height=True)
 
-        run_button.click(fn=run_grounded_sam, inputs=[
-                        input_image, text_prompt, task_type, inpaint_prompt, box_threshold, text_threshold], outputs=[gallery])
+        run_button.click(fn=run_grounded_sam, inputs=[input_image, text_prompt, task_type, inpaint_prompt, box_threshold, text_threshold, load_model], outputs=[gallery])
 
 
     block.launch(server_name='0.0.0.0', server_port=7589, debug=args.debug, share=args.share)
