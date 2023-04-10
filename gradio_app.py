@@ -271,7 +271,7 @@ if __name__ == "__main__":
             with gr.Column():
                 input_image = gr.Image(source='upload', type="pil")
                 text_prompt = gr.Textbox(label="Detection Prompt")
-                task_type = gr.Textbox(label="task type: det/seg/inpainting")
+                task_type = gr.Dropdown(["det", "seg", "inpainting"], label="task type: det/seg/inpainting")
                 inpaint_prompt = gr.Textbox(label="Inpaint Prompt")
                 run_button = gr.Button(label="Run")
                 with gr.Accordion("Advanced options", open=False):
