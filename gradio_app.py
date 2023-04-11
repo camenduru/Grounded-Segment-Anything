@@ -172,7 +172,7 @@ pipe = None
 def run_grounded_sam(image_path, text_prompt, task_type, inpaint_prompt, box_threshold, text_threshold, load_model, inpainting_model):
     assert text_prompt, 'text_prompt is not found!'
 
-    inpainting_model_revision == "main"
+    inpainting_model_revision = "main"
 
     # make dir
     os.makedirs(output_dir, exist_ok=True)
