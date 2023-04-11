@@ -169,7 +169,7 @@ output_dir="outputs"
 device="cuda"
 pipe = None
 
-def run_grounded_sam(image_path, text_prompt, task_type, inpaint_prompt, box_threshold, text_threshold, load_model, inpainting_model, inpainting_model_revision)):
+def run_grounded_sam(image_path, text_prompt, task_type, inpaint_prompt, box_threshold, text_threshold, load_model, inpainting_model, inpainting_model_revision):
     assert text_prompt, 'text_prompt is not found!'
 
     # make dir
