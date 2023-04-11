@@ -281,7 +281,7 @@ if __name__ == "__main__":
                 input_image = gr.Image(source='upload', type="pil")
                 text_prompt = gr.Textbox(label="Detection Prompt")
                 task_type = gr.Dropdown(["det", "seg", "inpainting"], label="task type: det/seg/inpainting", value="seg")
-                inpainting_model = gr.Dropdown(["runwayml/stable-diffusion-inpainting", "ckpt/dreamlike-diffusion-1.0-inpainting", "ckpt/f222-inpainting", "ckpt/realistic_vision_inpainting", "ckpt/SS_0.15_x_protogen-inpainting", "ckpt/PhotoMerge-inpainting", "ckpt/AniMerge-inpainting"], label="Inpainting Model", value="ckpt/dreamlike-diffusion-1.0-inpainting")
+                inpainting_model = gr.Dropdown(["runwayml/stable-diffusion-inpainting", "ckpt/dreamlike-diffusion-1.0-inpainting", "ckpt/f222-inpainting", "ckpt/realistic_vision_inpainting", "ckpt/SS_0.15_x_protogen-inpainting", "ckpt/PhotoMerge-inpainting", "ckpt/AniMerge-inpainting"], label="Inpainting Model", value="ckpt/dreamlike-diffusion-1.0-inpainting", allow_custom_value=True)
                 load_model = gr.Checkbox(label='load the model (just for the first run)', value=True)
                 inpaint_prompt = gr.Textbox(label="Inpaint Prompt")
                 run_button = gr.Button(label="Run")
