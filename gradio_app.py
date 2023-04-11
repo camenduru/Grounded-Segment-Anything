@@ -169,8 +169,10 @@ output_dir="outputs"
 device="cuda"
 pipe = None
 
-def run_grounded_sam(image_path, text_prompt, task_type, inpaint_prompt, box_threshold, text_threshold, load_model, inpainting_model, inpainting_model_revision):
+def run_grounded_sam(image_path, text_prompt, task_type, inpaint_prompt, box_threshold, text_threshold, load_model, inpainting_model):
     assert text_prompt, 'text_prompt is not found!'
+
+    inpainting_model_revision == "main"
 
     # make dir
     os.makedirs(output_dir, exist_ok=True)
@@ -249,7 +251,10 @@ def run_grounded_sam(image_path, text_prompt, task_type, inpaint_prompt, box_thr
         
         global pipe
         if load_model:
-            print("load_model True")
+            if inpainting_model == "runwayml/stable-diffusion-inpainting":
+                inpainting_model_revision == "fp16"
+            else
+                inpainting_model_revision == "main"
             pipe = StableDiffusionInpaintPipeline.from_pretrained(inpainting_model, revision=inpainting_model_revision, torch_dtype=torch.float16, safety_checker=None)
             pipe = pipe.to("cuda")
             pipe.enable_xformers_memory_efficient_attention()
@@ -276,8 +281,7 @@ if __name__ == "__main__":
                 input_image = gr.Image(source='upload', type="pil")
                 text_prompt = gr.Textbox(label="Detection Prompt")
                 task_type = gr.Dropdown(["det", "seg", "inpainting"], label="task type: det/seg/inpainting", value="seg")
-                inpainting_model = gr.Textbox(label="Inpainting Model", value="runwayml/stable-diffusion-inpainting", placeholder="hf diffusers")
-                inpainting_model_revision = gr.Textbox(label="Inpainting Model Revision", value="main", placeholder="usually main")
+                inpainting_model = gr.Dropdown(["runwayml/stable-diffusion-inpainting", "ckpt/dreamlike-diffusion-1.0-inpainting", "ckpt/f222-inpainting", "ckpt/realistic_vision_inpainting", "ckpt/SS_0.15_x_protogen-inpainting", "ckpt/PhotoMerge-inpainting", "ckpt/AniMerge-inpainting"], label="Inpainting Model", value="ckpt/dreamlike-diffusion-1.0-inpainting")
                 load_model = gr.Checkbox(label='load the model (just for the first run)', value=True)
                 inpaint_prompt = gr.Textbox(label="Inpaint Prompt")
                 run_button = gr.Button(label="Run")
@@ -293,6 +297,6 @@ if __name__ == "__main__":
                     type="pil",
                 ).style(full_width=True, full_height=True)
 
-        run_button.click(fn=run_grounded_sam, inputs=[input_image, text_prompt, task_type, inpaint_prompt, box_threshold, text_threshold, load_model, inpainting_model, inpainting_model_revision], outputs=[gallery])
+        run_button.click(fn=run_grounded_sam, inputs=[input_image, text_prompt, task_type, inpaint_prompt, box_threshold, text_threshold, load_model, inpainting_model], outputs=[gallery])
 
     block.launch(server_name='127.0.0.1', server_port=7860, debug=args.debug, share=args.share)
