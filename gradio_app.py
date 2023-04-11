@@ -253,7 +253,7 @@ def run_grounded_sam(image_path, text_prompt, task_type, inpaint_prompt, box_thr
         if load_model:
             if inpainting_model == "runwayml/stable-diffusion-inpainting":
                 inpainting_model_revision == "fp16"
-            else
+            else:
                 inpainting_model_revision == "main"
             pipe = StableDiffusionInpaintPipeline.from_pretrained(inpainting_model, revision=inpainting_model_revision, torch_dtype=torch.float16, safety_checker=None)
             pipe = pipe.to("cuda")
