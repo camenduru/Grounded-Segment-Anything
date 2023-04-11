@@ -162,13 +162,14 @@ def show_box(box, ax, label):
 
 
 config_file = 'GroundingDINO/groundingdino/config/GroundingDINO_SwinT_OGC.py'
-ckpt_repo_id = "ShilongLiu/GroundingDINO"
+ckpt_repo_id = "camenduru/GroundingDINO"
 ckpt_filenmae = "groundingdino_swint_ogc.pth"
-sam_checkpoint='/home/ecs-user/download/sam_vit_h_4b8939.pth' 
+sam_checkpoint='/content/sam_vit_h_4b8939.pth'
 output_dir="outputs"
 device="cuda"
+pipe = None
 
-def run_grounded_sam(image_path, text_prompt, task_type, inpaint_prompt, box_threshold, text_threshold):
+def run_grounded_sam(image_path, text_prompt, task_type, inpaint_prompt, box_threshold, text_threshold, load_model):
     assert text_prompt, 'text_prompt is not found!'
 
     # make dir
@@ -246,11 +247,13 @@ def run_grounded_sam(image_path, text_prompt, task_type, inpaint_prompt, box_thr
         mask_pil = Image.fromarray(mask)
         image_pil = Image.fromarray(image)
         
-        pipe = StableDiffusionInpaintPipeline.from_pretrained(
-        "runwayml/stable-diffusion-inpainting", torch_dtype=torch.float16
-        )
-        pipe = pipe.to("cuda")
-
+        global pipe
+        if load_model:
+            print("load_model True")
+            pipe = StableDiffusionInpaintPipeline.from_pretrained("runwayml/stable-diffusion-inpainting", revision="fp16", torch_dtype=torch.float16, safety_checker=None)
+            pipe = pipe.to("cuda")
+            pipe.enable_xformers_memory_efficient_attention()
+            
         image = pipe(prompt=inpaint_prompt, image=image_pil, mask_image=mask_pil).images[0]
         image_path = os.path.join(output_dir, "grounded_sam_inpainting_output.jpg")
         image.save(image_path)
@@ -272,7 +275,8 @@ if __name__ == "__main__":
             with gr.Column():
                 input_image = gr.Image(source='upload', type="pil")
                 text_prompt = gr.Textbox(label="Detection Prompt")
-                task_type = gr.Textbox(label="task type: det/seg/inpainting")
+                task_type = gr.Dropdown(["det", "seg", "inpainting"], label="task type: det/seg/inpainting", value="seg")
+                load_model = gr.Checkbox(label='load the model (just for the first run)', value=True)
                 inpaint_prompt = gr.Textbox(label="Inpaint Prompt")
                 run_button = gr.Button(label="Run")
                 with gr.Accordion("Advanced options", open=False):
@@ -288,8 +292,7 @@ if __name__ == "__main__":
                     type="pil",
                 ).style(full_width=True, full_height=True)
 
-        run_button.click(fn=run_grounded_sam, inputs=[
-                        input_image, text_prompt, task_type, inpaint_prompt, box_threshold, text_threshold], outputs=[gallery])
+        run_button.click(fn=run_grounded_sam, inputs=[input_image, text_prompt, task_type, inpaint_prompt, box_threshold, text_threshold, load_model], outputs=[gallery])
 
 
-    block.launch(server_name='0.0.0.0', server_port=7589, debug=args.debug, share=args.share)
+    block.launch(server_name='127.0.0.1', server_port=7860, debug=args.debug, share=args.share)
