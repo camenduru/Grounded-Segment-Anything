@@ -277,7 +277,7 @@ if __name__ == "__main__":
                 text_prompt = gr.Textbox(label="Detection Prompt")
                 task_type = gr.Dropdown(["det", "seg", "inpainting"], label="task type: det/seg/inpainting", value="seg")
                 inpainting_model = gr.Textbox(label="Inpainting Model", value="runwayml/stable-diffusion-inpainting", placeholder="hf diffusers")
-                inpainting_model_revision = gr.Textbox(label="Inpainting Model Revision", value="fp16", placeholder="usually main")
+                inpainting_model_revision = gr.Textbox(label="Inpainting Model Revision", value="main", placeholder="usually main")
                 load_model = gr.Checkbox(label='load the model (just for the first run)', value=True)
                 inpaint_prompt = gr.Textbox(label="Inpaint Prompt")
                 run_button = gr.Button(label="Run")
